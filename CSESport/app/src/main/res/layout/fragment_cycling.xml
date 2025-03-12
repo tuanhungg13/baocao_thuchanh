@@ -3,12 +3,36 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CyclingFragment">
+    tools:context=".RunningFragment"
+    android:background="@android:color/white">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Ảnh tiêu đề -->
+    <ImageView
+        android:id="@+id/imgHeader"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/hungry_developer" />
+
+    <!-- Tiêu đề -->
     <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:text="Cycling"
+        android:textSize="24sp"
+        android:textColor="@android:color/white"
+        android:gravity="center"
+        android:background="#80000000"
+        android:padding="8dp" />
+
+    <!-- Danh sách các cuộc chạy -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcv_cycling"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Cycling" />
-
+        android:layout_marginTop="200dp"
+        android:divider="@android:color/darker_gray"
+        android:dividerHeight="1dp"/>
 </FrameLayout>
