@@ -37,10 +37,10 @@ class RunningFragment : Fragment() {
         val recyclerView = view.findViewById<RecyclerView>(R.id.rcv_running)
 
         val runs = listOf(
-            RunItem("5km", "22:04", "29/11/2020"),
-            RunItem("10km", "22:04", "29/11/2020"),
-            RunItem("Half Marathon", "22:04", "29/11/2020"),
-            RunItem("Marathon", "22:04", "29/11/2020")
+            RunItem("5km", "20:04", "12/03/2025"),
+            RunItem("10km", "18:30", "10/02/2025"),
+            RunItem("Half Marathon", "06:34", "09/03/2025"),
+            RunItem("Marathon", "08:10", "25/02/2025")
         )
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
