@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
             finish()
             return
         }
-
+        auth.signOut();
         btnUnitContact.setOnClickListener{
             openContactActivity("unit")
         }

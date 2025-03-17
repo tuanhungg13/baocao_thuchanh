@@ -74,12 +74,25 @@ class RegisterFragment : Fragment() {
                                     Log.d("Email", "Email xác thực đã được gửi.")
                                 } else {
                                     // Xử lý lỗi khi gửi email xác thực
-                                    Log.e("Email", "Lỗi khi gửi email xác thực.", emailTask.exception)
+                                    Log.e(
+                                        "Email",
+                                        "Lỗi khi gửi email xác thực.",
+                                        emailTask.exception
+                                    )
                                 }
                             }
                     } else {
-                        // Xử lý lỗi khi tạo người dùng
-                        Log.e("Auth", "Lỗi khi tạo tài khoản.", task.exception)
+                        // Kiểm tra lỗi
+                        if (task.exception is FirebaseAuthUserCollisionException) {
+                            // Xử lý khi email đã tồn tại
+                            Log.e(
+                                "SignUp",
+                                "Email đã được sử dụng. Hãy thử đăng nhập hoặc sử dụng email khác."
+                            )
+                        } else {
+                            // Xử lý lỗi khác
+                            Log.e("SignUp", "Lỗi khi tạo tài khoản: ${task.exception?.message}")
+                        }
                     }
                 }
 
