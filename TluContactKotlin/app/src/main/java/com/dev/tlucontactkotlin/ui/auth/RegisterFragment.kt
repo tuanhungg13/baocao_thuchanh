@@ -19,11 +19,11 @@ class RegisterFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var edtEmail: TextInputEditText
     private lateinit var edtPassword: TextInputEditText
-    private  lateinit var edtConfirmPassword: TextInputEditText
+    private lateinit var edtConfirmPassword: TextInputEditText
     private lateinit var edtName: TextInputEditText
     private lateinit var edtLayoutEmail: TextInputLayout
     private lateinit var edtLayoutPassword: TextInputLayout
-    private  lateinit var edtLayoutConfirmPassword: TextInputLayout
+    private lateinit var edtLayoutConfirmPassword: TextInputLayout
     private lateinit var edtLayoutName: TextInputLayout
     private lateinit var btnRegister: Button
     private lateinit var txtLogin: TextView
@@ -61,45 +61,58 @@ class RegisterFragment : Fragment() {
         val confirmPassword = edtConfirmPassword.text.toString().trim()
         val fullName = edtName.text.toString().trim()
 
-        if(validateInputs(email,fullName,password,confirmPassword)){
+        if (validateInputs(email, fullName, password, confirmPassword)) {
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        // Gửi email xác thực sau khi tạo người dùng
                         val user = FirebaseAuth.getInstance().currentUser
                         user?.sendEmailVerification()
                             ?.addOnCompleteListener { emailTask ->
                                 if (emailTask.isSuccessful) {
-                                    // Email xác thực đã được gửi thành công
+                                    edtEmail.setText("")
+                                    edtName.setText("")
+                                    edtPassword.setText("")
+                                    edtConfirmPassword.setText("")
                                     Log.d("Email", "Email xác thực đã được gửi.")
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Vui lòng kiểm tra email để xác nhận tài khoản.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 } else {
-                                    // Xử lý lỗi khi gửi email xác thực
                                     Log.e(
                                         "Email",
                                         "Lỗi khi gửi email xác thực.",
                                         emailTask.exception
                                     )
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Gửi email xác thực thất bại.",
+                                        Toast.LENGTH_LONG
+                                    ).show()
                                 }
                             }
                     } else {
-                        // Kiểm tra lỗi
                         if (task.exception is FirebaseAuthUserCollisionException) {
-                            // Xử lý khi email đã tồn tại
-                            Log.e(
-                                "SignUp",
-                                "Email đã được sử dụng. Hãy thử đăng nhập hoặc sử dụng email khác."
-                            )
+                            Log.e("SignUp", "Email đã được sử dụng.")
+                            Toast.makeText(
+                                requireContext(),
+                                "Email đã tồn tại, hãy thử đăng nhập.",
+                                Toast.LENGTH_LONG
+                            ).show()
                         } else {
-                            // Xử lý lỗi khác
                             Log.e("SignUp", "Lỗi khi tạo tài khoản: ${task.exception?.message}")
+                            Toast.makeText(
+                                requireContext(),
+                                "Lỗi: ${task.exception?.message}",
+                                Toast.LENGTH_LONG
+                            ).show()
                         }
                     }
                 }
-
-
         }
-
     }
+
 
     private fun validateInputs(
         email: String,
@@ -137,7 +150,8 @@ class RegisterFragment : Fragment() {
             edtLayoutPassword.error = "Mật khẩu không được để trống"
             isValid = false
         } else if (!password.matches(passwordRegex)) {
-            edtLayoutPassword.error = "Mật khẩu cần ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt."
+            edtLayoutPassword.error =
+                "Mật khẩu cần ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt."
             isValid = false
         }
 

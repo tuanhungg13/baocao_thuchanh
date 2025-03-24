@@ -3,6 +3,7 @@ package com.dev.tlucontactkotlin
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -23,6 +24,7 @@ class MainActivity : ComponentActivity() {
     private lateinit var btnUnitContact: Button
     private lateinit var btnStaffContact: Button
     private lateinit var btnStudentContact: Button
+    private lateinit var btnLogout: LinearLayout
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,22 +35,27 @@ class MainActivity : ComponentActivity() {
         btnUnitContact = findViewById(R.id.btn_unit_contact)
         btnStaffContact = findViewById(R.id.btn_staff_contact)
         btnStudentContact = findViewById(R.id.btn_students_contact)
-
+        btnLogout = findViewById(R.id.btn_logout)
         if (auth.currentUser == null) {
             // Nếu chưa đăng nhập, chuyển đến AuthActivity
             startActivity(Intent(this, AuthActivity::class.java))
             finish()
             return
         }
-        auth.signOut();
-        btnUnitContact.setOnClickListener{
+        btnUnitContact.setOnClickListener {
             openContactActivity("unit")
         }
-        btnStudentContact.setOnClickListener{
+        btnStudentContact.setOnClickListener {
             openContactActivity("student")
         }
-        btnStaffContact.setOnClickListener{
+        btnStaffContact.setOnClickListener {
             openContactActivity("staff")
+        }
+
+        btnLogout.setOnClickListener {
+            auth.signOut()
+            startActivity(Intent(this, AuthActivity::class.java))
+            finish()
         }
 
     }

@@ -1,6 +1,6 @@
 package com.dev.tlucontactkotlin.models
 
-data class Unit(
+data class UnitContact(
     val id: String = "",          // Document ID (mã đơn vị)
     val code: String = "",        // Mã đơn vị
     val name: String = "",        // Tên đơn vị
