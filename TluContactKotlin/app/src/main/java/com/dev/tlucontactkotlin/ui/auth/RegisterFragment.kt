@@ -1,11 +1,13 @@
 package com.dev.tlucontactkotlin.ui.auth
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -27,7 +29,11 @@ class RegisterFragment : Fragment() {
     private lateinit var edtLayoutName: TextInputLayout
     private lateinit var btnRegister: Button
     private lateinit var txtLogin: TextView
+    private lateinit var progressBar: ProgressBar
 
+    private var isLoading = false
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -44,6 +50,8 @@ class RegisterFragment : Fragment() {
         edtName = view.findViewById(R.id.edt_name)
         btnRegister = view.findViewById(R.id.btn_register)
         txtLogin = view.findViewById(R.id.txt_link_login)
+        progressBar = activity?.findViewById<ProgressBar>(R.id.prg_loading)!!
+
         btnRegister.setOnClickListener { registerUser() }
         txtLogin.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -55,6 +63,12 @@ class RegisterFragment : Fragment() {
         return view
     }
 
+    private fun setLoadingState(loading: Boolean) {
+        isLoading = loading
+        btnRegister.isEnabled = !loading
+        progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+    }
+
     private fun registerUser() {
         val email = edtEmail.text.toString().trim()
         val password = edtPassword.text.toString().trim()
@@ -62,12 +76,15 @@ class RegisterFragment : Fragment() {
         val fullName = edtName.text.toString().trim()
 
         if (validateInputs(email, fullName, password, confirmPassword)) {
+            setLoadingState(true)
+
             auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         val user = FirebaseAuth.getInstance().currentUser
                         user?.sendEmailVerification()
                             ?.addOnCompleteListener { emailTask ->
+                                setLoadingState(false)
                                 if (emailTask.isSuccessful) {
                                     edtEmail.setText("")
                                     edtName.setText("")
@@ -79,6 +96,12 @@ class RegisterFragment : Fragment() {
                                         "Vui lòng kiểm tra email để xác nhận tài khoản.",
                                         Toast.LENGTH_LONG
                                     ).show()
+                                    // 👉 Chuyển sang màn hình đăng nhập
+                                    parentFragmentManager.beginTransaction()
+                                        .replace(R.id.authContainer, LoginFragment())
+                                        .addToBackStack(null)
+                                        .commit()
+                                    setLoadingState(false)
                                 } else {
                                     Log.e(
                                         "Email",
@@ -90,9 +113,11 @@ class RegisterFragment : Fragment() {
                                         "Gửi email xác thực thất bại.",
                                         Toast.LENGTH_LONG
                                     ).show()
+                                    setLoadingState(false)
                                 }
                             }
                     } else {
+                        setLoadingState(false)
                         if (task.exception is FirebaseAuthUserCollisionException) {
                             Log.e("SignUp", "Email đã được sử dụng.")
                             Toast.makeText(
@@ -113,7 +138,6 @@ class RegisterFragment : Fragment() {
         }
     }
 
-
     private fun validateInputs(
         email: String,
         fullName: String,
@@ -122,15 +146,14 @@ class RegisterFragment : Fragment() {
     ): Boolean {
         var isValid = true
 
-        // Reset lỗi trước khi kiểm tra
         edtLayoutEmail.error = null
         edtLayoutPassword.error = null
         edtLayoutConfirmPassword.error = null
         edtLayoutName.error = null
+
         val passwordRegex =
             Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*\\d)(?=.*[@\$!%*?&])[A-Za-z\\d@\$!%*?&]{8,}$")
 
-        // Kiểm tra email
         if (email.isEmpty()) {
             edtLayoutEmail.error = "Email không được để trống"
             isValid = false
@@ -139,13 +162,11 @@ class RegisterFragment : Fragment() {
             isValid = false
         }
 
-        // Kiểm tra tên đầy đủ
         if (fullName.isEmpty()) {
             edtLayoutName.error = "Họ và tên không được để trống"
             isValid = false
         }
 
-        // Kiểm tra mật khẩu
         if (password.isEmpty()) {
             edtLayoutPassword.error = "Mật khẩu không được để trống"
             isValid = false
@@ -155,7 +176,6 @@ class RegisterFragment : Fragment() {
             isValid = false
         }
 
-        // Kiểm tra xác nhận mật khẩu
         if (confirmPassword.isEmpty()) {
             edtLayoutConfirmPassword.error = "Vui lòng nhập lại mật khẩu"
             isValid = false
@@ -166,5 +186,4 @@ class RegisterFragment : Fragment() {
 
         return isValid
     }
-
 }

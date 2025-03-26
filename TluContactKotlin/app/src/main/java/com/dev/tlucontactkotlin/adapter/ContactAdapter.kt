@@ -9,12 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.dev.tlucontactkotlin.R
 import com.dev.tlucontactkotlin.models.Staff
+import com.dev.tlucontactkotlin.models.Student
 import com.dev.tlucontactkotlin.models.UnitContact
 import com.dev.tlucontactkotlin.utils.ContactItem
 
 class ContactAdapter(
     private var contacts: List<ContactItem>,
-    private val contactType: String
+    private val contactType: String,
+    private val onItemClick: (ContactItem) -> Unit
+
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -37,19 +40,20 @@ class ContactAdapter(
             TYPE_STAFF -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_staff, parent, false)
-                StaffViewHolder(view)
+                StaffViewHolder(view, onItemClick)
+
             }
 
-//            TYPE_STUDENT -> {
-//                val view = LayoutInflater.from(parent.context)
-//                    .inflate(R.layout.item_student, parent, false)
-//                StudentViewHolder(view)
-//            }
+            TYPE_STUDENT -> {
+                val view = LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_student, parent, false)
+                StudentViewHolder(view, onItemClick)
+            }
 
             TYPE_UNIT -> {
                 val view = LayoutInflater.from(parent.context)
                     .inflate(R.layout.item_unit, parent, false)
-                UnitViewHolder(view)
+                UnitViewHolder(view, onItemClick)
             }
 
             else -> throw IllegalArgumentException("Unknown view type")
@@ -71,7 +75,10 @@ class ContactAdapter(
         notifyDataSetChanged()
     }
 
-    class StaffViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class StaffViewHolder(
+        view: View,
+        private val onItemClick: (ContactItem) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
         private val imgAvatar: ImageView = view.findViewById(R.id.img_logo_staff)
         private val txtName: TextView = view.findViewById(R.id.txt_staff_name)
         private val txtPosition: TextView = view.findViewById(R.id.txt_staff_position)
@@ -86,26 +93,38 @@ class ContactAdapter(
             Glide.with(itemView.context)
                 .load(staff.photoURL ?: R.drawable.logo)
                 .into(imgAvatar)
+            itemView.setOnClickListener {
+                onItemClick(ContactItem.StaffItem(staff))
+            }
         }
     }
 
-//    class StudentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-//        private val imgAvatar: ImageView = view.findViewById(R.id.img_avatar)
-//        private val tvName: TextView = view.findViewById(R.id.tv_name)
-//        private val tvClass: TextView = view.findViewById(R.id.tv_class)
-//        private val tvPhone: TextView = view.findViewById(R.id.tv_phone)
-//        private val tvEmail: TextView = view.findViewById(R.id.tv_email)
-//
-//        fun bind(student: Student) {
-//            tvName.text = student.fullName
-//            tvClass.text = "Lớp: ${student.className}"
-//            tvPhone.text = "📞 ${student.phone}"
-//            tvEmail.text = "✉️ ${student.email}"
-//            Glide.with(itemView.context).load(student.photoURL).into(imgAvatar)
-//        }
-//    }
+    class StudentViewHolder(
+        view: View,
+        private val onItemClick: (ContactItem) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
+        private val imgAvatar: ImageView = view.findViewById(R.id.img_avatar_std)
+        private val txtFullName: TextView = view.findViewById(R.id.txt_std_name)
+        private val txtClassName: TextView = view.findViewById(R.id.txt_std_className)
+        private val txtPhone: TextView = view.findViewById(R.id.txt_std_phone)
+        private val txtEmail: TextView = view.findViewById(R.id.txt_std_mail)
 
-    class UnitViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(student: Student) {
+            txtFullName.text = student.fullName
+            txtClassName.text = student.className
+            txtPhone.text = student.phone
+            txtEmail.text = student.email
+            Glide.with(itemView.context).load(student.photoURL).into(imgAvatar)
+            itemView.setOnClickListener {
+                onItemClick(ContactItem.StudentItem(student))
+            }
+        }
+    }
+
+    class UnitViewHolder(
+        view: View,
+        private val onItemClick: (ContactItem) -> Unit
+    ) : RecyclerView.ViewHolder(view) {
         private val imgLogo: ImageView = view.findViewById(R.id.img_logo_unit)
         private val txtName: TextView = view.findViewById(R.id.txt_unit_name)
         private val txtPhone: TextView = view.findViewById(R.id.txt_unit_phone)
@@ -115,6 +134,10 @@ class ContactAdapter(
             txtName.text = unit.name
             txtPhone.text = unit.phone
             Glide.with(itemView.context).load(unit.logoURL).into(imgLogo)
+            itemView.setOnClickListener {
+                onItemClick(ContactItem.UnitItem(unit))
+            }
         }
     }
 }
+

@@ -1,11 +1,13 @@
 package com.dev.tlucontactkotlin.ui.auth
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -25,7 +27,11 @@ class LoginFragment : Fragment() {
     private lateinit var edtLayoutPassword: TextInputLayout
     private lateinit var btnLogin: Button
     private lateinit var txtRegister: TextView
+    private lateinit var progressBar: ProgressBar
 
+    private var isLoading = false
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
@@ -38,6 +44,7 @@ class LoginFragment : Fragment() {
         edtLayoutPassword = view.findViewById(R.id.edt_layout_pw)
         btnLogin = view.findViewById(R.id.btn_login)
         txtRegister = view.findViewById(R.id.txt_register)
+        progressBar = activity?.findViewById<ProgressBar>(R.id.prg_loading)!!
 
 
         btnLogin.setOnClickListener { loginUser() }
@@ -51,6 +58,12 @@ class LoginFragment : Fragment() {
         return view
     }
 
+
+    private fun setLoadingState(loading: Boolean) {
+        isLoading = loading
+        btnLogin.isEnabled = !loading
+        progressBar.visibility = if (loading) View.VISIBLE else View.GONE
+    }
 
 
     private fun loginUser() {
@@ -76,24 +89,35 @@ class LoginFragment : Fragment() {
         }
 
         if (!isValid) return
-
+        setLoadingState(true)
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
                     if (user != null && user.isEmailVerified) {
-                        Toast.makeText(requireContext(), "Đăng nhập thành công!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            requireContext(),
+                            "Đăng nhập thành công!",
+                            Toast.LENGTH_SHORT
+                        ).show()
                         startActivity(Intent(requireContext(), MainActivity::class.java))
                         requireActivity().finish()
-                    }
-                    else{
-                        Toast.makeText(requireContext(), "Vui lòng xác nhận email trước khi đăng nhập!", Toast.LENGTH_LONG).show()
+                        setLoadingState(false)
+                    } else {
+                        Toast.makeText(
+                            requireContext(),
+                            "Vui lòng xác nhận email trước khi đăng nhập!",
+                            Toast.LENGTH_LONG
+                        ).show()
                         auth.signOut()
+                        setLoadingState(false)
                     }
                 } else {
+                    setLoadingState(false)
                     edtLayoutPassword.error = "Email hoặc mật khẩu không đúng"
                 }
             }
+
     }
 
 }
