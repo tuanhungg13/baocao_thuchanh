@@ -13,12 +13,12 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/img_logo_unit"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/logo"
-            android:padding="8dp" />
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/logo"
+            android:layout_margin="8dp" />
 
         <LinearLayout
             android:layout_width="0dp"

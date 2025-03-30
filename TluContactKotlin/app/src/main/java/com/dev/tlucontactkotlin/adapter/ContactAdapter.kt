@@ -64,7 +64,7 @@ class ContactAdapter(
         when (val contact = contacts[position]) {
             is ContactItem.StaffItem -> (holder as StaffViewHolder).bind(contact.staff)
             is ContactItem.UnitItem -> (holder as UnitViewHolder).bind(contact.unit)
-            is ContactItem.StudentItem -> TODO()
+            is ContactItem.StudentItem -> (holder as StudentViewHolder).bind(contact.student)
         }
     }
 
@@ -84,14 +84,16 @@ class ContactAdapter(
         private val txtPosition: TextView = view.findViewById(R.id.txt_staff_position)
         private val txtPhone: TextView = view.findViewById(R.id.txt_staff_phone)
         private val txtEmail: TextView = view.findViewById(R.id.txt_staff_mail)
-
         fun bind(staff: Staff) {
             txtName.text = staff.fullName
             txtPosition.text = staff.position
             txtPhone.text = staff.phone
             txtEmail.text = staff.email
+
             Glide.with(itemView.context)
                 .load(staff.photoURL ?: R.drawable.logo)
+                .placeholder(R.drawable.logo) // ảnh mặc định khi chưa tải xong
+                .error(R.drawable.logo)
                 .into(imgAvatar)
             itemView.setOnClickListener {
                 onItemClick(ContactItem.StaffItem(staff))
@@ -114,7 +116,10 @@ class ContactAdapter(
             txtClassName.text = student.className
             txtPhone.text = student.phone
             txtEmail.text = student.email
-            Glide.with(itemView.context).load(student.photoURL).into(imgAvatar)
+            Glide.with(itemView.context).load(student.photoURL)
+                .placeholder(R.drawable.logo) // ảnh mặc định khi chưa tải xong
+                .error(R.drawable.logo)
+                .into(imgAvatar)
             itemView.setOnClickListener {
                 onItemClick(ContactItem.StudentItem(student))
             }
@@ -133,7 +138,10 @@ class ContactAdapter(
         fun bind(unit: UnitContact) {
             txtName.text = unit.name
             txtPhone.text = unit.phone
-            Glide.with(itemView.context).load(unit.logoURL).into(imgLogo)
+            Glide.with(itemView.context).load(unit.logoURL)
+                .placeholder(R.drawable.logo) // ảnh mặc định khi chưa tải xong
+                .error(R.drawable.logo)
+                .into(imgLogo)
             itemView.setOnClickListener {
                 onItemClick(ContactItem.UnitItem(unit))
             }

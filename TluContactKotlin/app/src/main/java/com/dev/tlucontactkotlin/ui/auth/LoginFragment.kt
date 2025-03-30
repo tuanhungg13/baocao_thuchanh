@@ -94,7 +94,7 @@ class LoginFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val user = auth.currentUser
-                    if (user != null && user.isEmailVerified) {
+                    if (user != null) {
                         Toast.makeText(
                             requireContext(),
                             "Đăng nhập thành công!",

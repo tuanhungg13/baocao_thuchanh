@@ -11,5 +11,6 @@ data class Staff(
     val email: String = "",      // Email
     val photoURL: String = "",   // Đường dẫn ảnh đại diện
     val unitId: String = "",     // ID đơn vị trực thuộc (tham chiếu đến collection `units`)
-    val userId: String = ""      // UID từ Firebase Authentication (liên kết với `users`)
+    val userId: String = "",     // UID từ Firebase Authentication (liên kết với `users`)
+    val address: String = ""     // Địa chỉ
 ) : Serializable
