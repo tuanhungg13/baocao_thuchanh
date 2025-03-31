@@ -50,7 +50,11 @@ class ProfileActivity : AppCompatActivity() {
 
         val photoUrl = data["photoURL"]
         if (!photoUrl.isNullOrEmpty()) {
-            Glide.with(this).load(photoUrl).into(binding.previewImage)
+            Glide.with(this)
+                .load(photoUrl)
+                .placeholder(R.drawable.logo)
+                .error(R.drawable.logo)
+                .into(binding.previewImage)
         }
     }
 

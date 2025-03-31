@@ -61,7 +61,7 @@
         android:id="@+id/edt_layout_class"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Lớp"
+        android:hint="Lớp (nếu là sinh viên)"
         android:layout_marginBottom="16dp"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 

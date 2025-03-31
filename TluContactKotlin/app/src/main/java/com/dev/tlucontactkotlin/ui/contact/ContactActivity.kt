@@ -41,9 +41,16 @@ class ContactActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+        contactType = intent.getStringExtra("CONTACT_TYPE") ?: return
 
         supportActionBar?.apply {
-            title = "Danh bạ"
+            title = when (contactType) {
+                "staff" -> "Danh bạ CBNV"
+                "student" -> "Danh bạ sinh viên"
+                "unit" -> "Danh bạ đơn vị"
+                else -> "Danh bạ"
+            }
+
             setDisplayHomeAsUpEnabled(true)
         }
 
@@ -52,7 +59,6 @@ class ContactActivity : AppCompatActivity() {
         btnAddContact = findViewById(R.id.btn_add_contact)
         progressBar = findViewById(R.id.progressBar)
 
-        contactType = intent.getStringExtra("CONTACT_TYPE") ?: return
         userRole = intent.getStringExtra("USER_ROLE") ?: ""
 
         // Ẩn nút thêm nếu không phải admin

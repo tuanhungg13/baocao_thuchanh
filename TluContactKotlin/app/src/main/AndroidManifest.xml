@@ -41,7 +41,8 @@
         <activity
             android:name=".ui.contact.DetailActivity"
             android:exported="false"
-            android:parentActivityName=".ui.contact.ContactActivity" />
+            android:parentActivityName=".ui.contact.ContactActivity"
+            android:label="Thông tin chi tiết" />
         <activity
             android:name=".MainActivity"
             android:exported="true"
